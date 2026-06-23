@@ -143,13 +143,9 @@ The Application Layer should be improved by making the Order, Product, Payment, 
 The system should also include Redis Cache, Audit Log Storage, separate databases per service, monitoring agents, Prometheus and Grafana monitoring, an Alert Pipeline, and Docker/Kubernetes deployment for scalability and high availability.
 
 **How to Run the Project**
-Open the project folder in VS Code.
-Activate the virtual environment:
-.venv\Scripts\activate
-Install the required packages:
-pip install -r requirements.txt
-Run the FastAPI server:
-python -m uvicorn app.main:app --reload
-Open the browser and go to:
-http://127.0.0.1:8000
-Register a user, log in, and access the dashboard.
+1. Open the project folder in VS Code.
+2. Activate the virtual environment: .venv\Scripts\activate
+3. Install the required packages: pip install -r requirements.txt
+4. Run the FastAPI server: python -m uvicorn app.main:app --reload
+5. Open the browser and go to: http://127.0.0.1:8000
+6. Register a user, log in, and access the dashboard.

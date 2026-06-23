@@ -1,9 +1,6 @@
 # Virtual environment
 .venv/
 
-# Environment variables
-.env
-
 # SQLite database
 finmark.db
 *.db

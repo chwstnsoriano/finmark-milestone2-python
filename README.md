@@ -7,9 +7,7 @@ The project includes a working frontend, backend APIs, local database storage, a
 
 ## **Purpose of the Prototype**
 
-The purpose of this prototype is to create a minimum functional version of the platform. Instead of building the full production system immediately, this version demonstrates how users can register, log in, receive authentication access, and view a protected dashboard.
-
-This satisfies the Software Development Track requirement by providing a working login module with both frontend and backend logic.
+The purpose of this prototype is to create a minimum functional version of the platform. This version demonstrates how users can register, log in, receive authentication access, and view a protected dashboard.
 
 ## **Tools and Technologies Used**
 Python

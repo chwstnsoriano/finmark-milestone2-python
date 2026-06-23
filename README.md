@@ -146,8 +146,8 @@ The Edge Layer should later include CDN, WAF, and DDoS protection. The Load Bala
 
 ## **How to Run the Project**
 1. Open the project folder in VS Code.
-2. Activate the virtual environment: .venv\Scripts\activate
-3. Install the required packages: pip install -r requirements.txt
-4. Run the FastAPI server: python -m uvicorn app.main:app --reload
+2. Activate the virtual environment in terminal/powershell: .venv\Scripts\activate
+3. Install the required packages in terminal/powershell: pip install -r requirements.txt
+4. Run the FastAPI server in terminal/powershell: python -m uvicorn app.main:app --reload
 5. Open the browser and go to: http://127.0.0.1:8000
 6. Register a user, log in, and access the dashboard.

@@ -57,18 +57,6 @@ The Register page sends user information to the backend. The Login page sends cr
 
 The backend was built using FastAPI. The API acts as the bridge between the frontend and backend. The frontend does not directly access the database. Instead, it sends requests to the backend API, and the backend handles validation, authentication, database access, and responses.
 
-Main APIs created:
-
-POST /api/auth/register - registers a new user
-POST /api/auth/login - logs in a user and returns a JWT token
-GET /api/auth/me - checks the current logged-in user
-GET /api/dashboard/summary - returns protected dashboard data
-GET /api/system/services - shows system service status
-GET /api/orders/summary - shows order service data
-GET /api/products/summary - shows product service data
-GET /api/payments/summary - shows payment service data
-GET /api/financials/summary - shows financial service data
-
 ## **Database Implementation**
 
 SQLite was used as the local database. The database stores registered user accounts with the following information:

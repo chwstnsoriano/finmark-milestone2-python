@@ -18,7 +18,6 @@
                 <div class="brand-badge small">FM</div>
                 <div>
                     <h5>FinMark</h5>
-                    <p>Milestone 2</p>
                 </div>
             </div>
 
@@ -30,11 +29,6 @@
                 <a>Reports</a>
                 <a>Monitoring</a>
             </nav>
-
-            <div class="sidebar-note">
-                <strong>Draft 1</strong>
-                <span>Role-Based Fast Dashboard Prototype</span>
-            </div>
         </aside>
 
         <main class="main-content">
@@ -46,10 +40,6 @@
                 </div>
 
                 <button class="btn logout-btn" onclick="logout()">Logout</button>
-            </div>
-
-            <div id="performanceBanner" class="performance-banner">
-                Loading dashboard performance...
             </div>
 
             <div class="metric-grid">
@@ -101,8 +91,8 @@
 
                 <div class="panel-card">
                     <div class="panel-heading">
-                        <h4>Architecture Services</h4>
-                        <span>Draft 1 Status</span>
+                        <h4>Services</h4>
+                        <span>Status</span>
                     </div>
 
                     <div class="service-row">
@@ -130,17 +120,6 @@
                         <span class="badge-placeholder">Placeholder</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="panel-card mt-4 mb-5">
-                <div class="panel-heading">
-                    <h4>Performance and Optimization</h4>
-                    <span>Target: under 3 seconds</span>
-                </div>
-
-                <p id="performance">Loading...</p>
-                <p id="cacheStatus">Loading...</p>
-                <p id="optimization">Loading...</p>
             </div>
         </main>
     </div>
@@ -200,18 +179,6 @@
                     .join("");
 
                 document.getElementById("orderSummary").innerHTML = ordersText;
-
-                document.getElementById("performance").innerText =
-                    `Dashboard API response time: ${data.load_time_ms}ms`;
-
-                document.getElementById("cacheStatus").innerText =
-                    `Cache status: ${data.cache_status}`;
-
-                document.getElementById("optimization").innerText =
-                    `Optimization used: ${data.optimization_used.join(", ")}`;
-
-                document.getElementById("performanceBanner").innerText =
-                    `Dashboard loaded in ${data.load_time_ms}ms. Cache status: ${data.cache_status.toUpperCase()}.`;
 
             } catch (error) {
                 alert("Server connection error.");

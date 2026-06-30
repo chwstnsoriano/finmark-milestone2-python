@@ -12,23 +12,18 @@ from app.features.auth.auth_routes import router as auth_router
 from app.features.dashboard.dashboard_routes import router as dashboard_router
 from app.features.system_routes import router as system_router
 
-app = FastAPI(title="FinMark Milestone 2 API Prototype")
-
-templates = Jinja2Templates(directory="app/templates")
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
-
-# @app.on_event("startup")
-# def startup_event():
-#     init_db()
-
 @asynccontextmanager
 async def server_lifetime(app : FastAPI):
     # eq to on_event("startup")
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
     init_db()
 
+    print("Initialization complete")
     yield # eq to on_event("shutdown")
-    pass # anything else on this block and so on is part of the shutdown execution.
+    print("Shutdown complete")
+
+templates = Jinja2Templates(directory="app/templates")
+app = FastAPI(title="FinMark Milestone 2 API Prototype", lifespan=server_lifetime)
 
 
 @app.middleware("http")

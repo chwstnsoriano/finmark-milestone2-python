@@ -1,5 +1,7 @@
 import time
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -16,9 +18,17 @@ templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
-@app.on_event("startup")
-def startup_event():
+# @app.on_event("startup")
+# def startup_event():
+#     init_db()
+
+@asynccontextmanager
+async def server_lifetime(app : FastAPI):
+    # eq to on_event("startup")
     init_db()
+
+    yield # eq to on_event("shutdown")
+    pass # anything else on this block and so on is part of the shutdown execution.
 
 
 @app.middleware("http")

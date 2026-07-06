@@ -44,10 +44,10 @@ def login_user(email: str, password: str):
 
     user = find_user_by_email(email)
 
-    if not user:
-        raise PermissionError("Invalid email or password.")
-
-    if not verify_password(password, user["password_hash"]):
+    if not (
+        user
+        and verify_password(password, user["password_hash"])
+    ):
         raise PermissionError("Invalid email or password.")
 
     token = create_access_token(user)

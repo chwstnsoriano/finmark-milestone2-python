@@ -333,3 +333,30 @@ def test_customer_cannot_access_dashboard_summary():
 
     assert dashboard_response.status_code == 403
     assert dashboard_response.json()["detail"] == "Customers can place service orders but cannot access the employee dashboard."
+
+def test_system_health_available():
+    response = client.get("/api/system/health")
+
+    assert response.status_code == 200
+    assert "overall_status" in response.json()
+    assert "database" in response.json()
+    assert "services" in response.json()
+    assert "rate_limiting" in response.json()
+
+
+def test_system_resilience_available():
+    response = client.get("/api/system/resilience")
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "FinMark prototype resilience features are enabled."
+    assert "rate_limiting" in response.json()["features"]
+    assert "fallback_responses" in response.json()["features"]
+    assert "audit_logging" in response.json()["features"]
+
+
+def test_api_gateway_headers_present():
+    response = client.get("/api/system/services")
+
+    assert response.status_code == 200
+    assert "X-Process-Time-ms" in response.headers
+    assert response.headers["X-Prototype-Gateway"] == "FinMark API Gateway Middleware"

@@ -472,7 +472,7 @@
         async function loadMonitoring() {
             const auditLogs = await fetchJson("/api/audit-logs");
             const events = await fetchJson("/api/events");
-            const services = await fetchJson("/api/system/services");
+            const services = await fetchJson("/api/system/health");
 
             const logRows = auditLogs.logs.slice(0, 10).map(log => `
                 <tr>

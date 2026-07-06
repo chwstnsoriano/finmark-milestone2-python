@@ -6,6 +6,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
+from app.utils.resilience import is_rate_limited
 
 from app.database import init_db
 from app.features.auth.auth_routes import router as auth_router
@@ -29,15 +31,32 @@ app = FastAPI(title="FinMark Milestone 2 API Prototype", lifespan=server_lifetim
 
 
 @app.middleware("http")
-async def log_request_time(request: Request, call_next):
+async def api_gateway_middleware(request: Request, call_next):
     start_time = time.perf_counter()
+    path = request.url.path
+
+    if path.startswith("/api"):
+        client_host = request.client.host if request.client else "unknown"
+        client_id = f"{client_host}:{path}"
+
+        if is_rate_limited(client_id):
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "detail": "Too many requests. Please wait before trying again.",
+                    "resilience_feature": "API Gateway rate limiting"
+                }
+            )
 
     response = await call_next(request)
 
     process_time = round((time.perf_counter() - start_time) * 1000, 2)
-    print(f"{request.method} {request.url.path} completed in {process_time}ms")
+
+    print(f"{request.method} {path} completed in {process_time}ms")
 
     response.headers["X-Process-Time-ms"] = str(process_time)
+    response.headers["X-Prototype-Gateway"] = "FinMark API Gateway Middleware"
+    response.headers["X-Rate-Limit-Policy"] = "120 requests per 60 seconds per API route"
 
     return response
 

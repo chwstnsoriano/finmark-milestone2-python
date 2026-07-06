@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FinMark Service Order</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="auth-body">
+    <div class="auth-card">
+        <h1>FinMark Service Order</h1>
+        <p class="auth-subtitle">Submit a service request for your business.</p>
+
+        <form id="orderForm">
+            <div class="mb-3">
+                <label class="form-label">Customer Name</label>
+                <input type="text" id="customerName" class="form-control" placeholder="Enter customer name">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Customer Email</label>
+                <input type="email" id="customerEmail" class="form-control" placeholder="Enter customer email">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Client Type</label>
+                <select id="clientType" class="form-control">
+                    <option value="">Select client type</option>
+                    <option value="retail">Retail</option>
+                    <option value="e-commerce">E-commerce</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">FinMark Service</label>
+                <select id="serviceId" class="form-control">
+                    <option value="">Loading services...</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Order Notes</label>
+                <textarea id="orderNotes" class="form-control" rows="3" placeholder="Optional notes about the business need"></textarea>
+            </div>
+
+            <button type="submit" id="submitButton" class="btn btn-primary w-100">
+                Submit Service Order
+            </button>
+        </form>
+
+        <div id="message" class="p-2 px-3 shadow-lg mt-3 fw-bold rounded-3" hidden="true"></div>
+
+        <div class="auth-footer">
+            <a href="/">Back to Login</a>
+        </div>
+    </div>
+
+    <script>
+        const serviceSelect = document.getElementById("serviceId");
+        const message = document.getElementById("message");
+        const button = document.getElementById("submitButton");
+
+        async function loadServices() {
+            const response = await fetch("/api/services/catalog");
+            const data = await response.json();
+
+            serviceSelect.innerHTML = '<option value="">Select FinMark service</option>';
+
+            data.services.forEach(service => {
+                const option = document.createElement("option");
+                option.value = service.id;
+                option.textContent = `${service.service_name} - ₱${service.base_price.toLocaleString()}`;
+                serviceSelect.appendChild(option);
+            });
+        }
+
+        function showMessage(text, success) {
+            message.innerText = text;
+            message.removeAttribute("hidden");
+            message.classList.remove("bg-danger", "bg-success");
+            message.classList.add(success ? "bg-success" : "bg-danger");
+        }
+
+        document.getElementById("orderForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            message.setAttribute("hidden", true);
+            button.disabled = true;
+            button.innerText = "Submitting...";
+
+            const payload = {
+                customer_name: document.getElementById("customerName").value,
+                customer_email: document.getElementById("customerEmail").value,
+                client_type: document.getElementById("clientType").value,
+                service_id: document.getElementById("serviceId").value || null,
+                order_notes: document.getElementById("orderNotes").value
+            };
+
+            const response = await fetch("/api/orders/place", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showMessage(data.detail || "Unable to place service order.", false);
+                button.disabled = false;
+                button.innerText = "Submit Service Order";
+                return;
+            }
+
+            showMessage("Service order submitted successfully. Payment record and event bus records were created.", true);
+            document.getElementById("orderForm").reset();
+
+            button.disabled = false;
+            button.innerText = "Submit Service Order";
+        });
+
+        loadServices();
+    </script>
+</body>
+</html>

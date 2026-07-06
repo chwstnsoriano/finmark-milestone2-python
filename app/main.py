@@ -12,6 +12,7 @@ from app.features.auth.auth_routes import router as auth_router
 from app.features.dashboard.dashboard_routes import router as dashboard_router
 from app.features.system_routes import router as system_router
 from app.features.monitoring_routes import router as monitoring_router
+from app.features.orders.order_routes import router as order_router
 
 @asynccontextmanager
 async def server_lifetime(app : FastAPI):
@@ -45,6 +46,7 @@ app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 app.include_router(dashboard_router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(system_router, prefix="/api", tags=["Architecture Services"])
 app.include_router(monitoring_router, prefix="/api", tags=["Monitoring"])
+app.include_router(order_router, prefix="/api", tags=["Service Orders"])
 
 @app.get("/", response_class=HTMLResponse)
 def login_page(request: Request):
@@ -69,6 +71,12 @@ def dashboard_page(request: Request):
         name="dashboard.html"
     )
 
+@app.get("/order", response_class=HTMLResponse)
+def order_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="order.html"
+    )
 
 @app.get("/health")
 def health_check():

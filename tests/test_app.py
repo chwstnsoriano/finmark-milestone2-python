@@ -161,3 +161,89 @@ def test_system_services_health():
 
     assert response.status_code == 200
     assert response.json()["auth_service"] == "working"
+
+def test_service_catalog_available():
+    response = client.get("/api/services/catalog")
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "FinMark service catalog retrieved successfully"
+    assert len(response.json()["services"]) >= 4
+
+
+def test_place_order_requires_request_body():
+    response = client.post("/api/orders/place")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Request body is required."
+
+
+def test_place_order_missing_customer_name():
+    response = client.post(
+        "/api/orders/place",
+        json={
+            "customer_name": "",
+            "customer_email": "client@finmark.local",
+            "client_type": "retail",
+            "service_id": 1,
+            "order_notes": "Need financial analysis."
+        }
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Customer name is required."
+
+
+def test_place_order_invalid_customer_email():
+    response = client.post(
+        "/api/orders/place",
+        json={
+            "customer_name": "ABC Retail Group",
+            "customer_email": "invalidemail",
+            "client_type": "retail",
+            "service_id": 1,
+            "order_notes": "Need financial analysis."
+        }
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "A valid customer email address is required."
+
+
+def test_place_order_success():
+    response = client.post(
+        "/api/orders/place",
+        json={
+            "customer_name": "Milestone Test Client",
+            "customer_email": "milestoneclient@finmark.local",
+            "client_type": "e-commerce",
+            "service_id": 1,
+            "order_notes": "Need financial analysis for projected growth."
+        }
+    )
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "Service order placed successfully"
+    assert response.json()["order"]["customer_email"] == "milestoneclient@finmark.local"
+    assert response.json()["order"]["order_status"] == "pending"
+    assert response.json()["order"]["payment_status"] == "pending"
+
+
+def test_orders_list_available():
+    response = client.get("/api/orders/list")
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "Service orders retrieved successfully"
+
+
+def test_events_available():
+    response = client.get("/api/events")
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "Event bus records retrieved successfully"
+
+
+def test_audit_logs_available():
+    response = client.get("/api/audit-logs")
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "Audit logs retrieved successfully"

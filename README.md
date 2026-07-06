@@ -533,27 +533,24 @@ Recommended future improvements:
 
 1. Open the project folder in VS Code.
 
-2. Create a virtual environment if it does not exist yet:
 
-   python -m venv .venv
-
-3. Activate the virtual environment:
+2. Activate the virtual environment:
 
    .venv\Scripts\activate
 
-4. Install the required packages:
+3. Install the required packages:
 
    pip install -r requirements.txt
 
-5. Run the FastAPI server:
+4. Run the FastAPI server:
 
    python -m uvicorn app.main:app --reload
 
-6. Open the browser and go to:
+5. Open the browser and go to:
 
    http://127.0.0.1:8000
 
-7. Register a user, log in, and test the prototype.
+6. Register a user, log in, and test the prototype.
 
 ---
 

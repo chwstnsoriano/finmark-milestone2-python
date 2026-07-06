@@ -1,4 +1,4 @@
-# FinMark Milestone 2: Project Prototype
+# FinMark Milestone 2: Refined Project Prototype
 
 ## Project Overview
 
@@ -588,9 +588,3 @@ Recommended demo flow:
 13. Open Monitoring page.
 14. Show /api/system/health.
 15. Show Pytest result.
-
----
-
-## GitHub Repository
-
-This project is stored in GitHub as the submitted source code repository for the FinMark Milestone 2 refined prototype.

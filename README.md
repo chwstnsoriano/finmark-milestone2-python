@@ -1,4 +1,4 @@
-# FinMark Milestone 2: Refined Project Prototype
+# **FinMark Milestone 2: Prototype**
 
 ## Project Overview
 

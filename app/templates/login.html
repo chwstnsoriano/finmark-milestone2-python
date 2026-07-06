@@ -35,7 +35,7 @@
                 </button>
             </form>
 
-            <p id="message" class="mt-3 fw-bold text-danger"></p>
+            <div id="message" class="p-2 px-3 shadow-lg mt-3 fw-bold bg-danger rounded-3" hidden="true"></div>
 
             <div class="auth-footer">
                 <span>No account yet?</span>
@@ -53,6 +53,7 @@
             event.preventDefault();
 
             message.innerText = "";
+            message.setAttribute("hidden", true);
             button.disabled = true;
             button.innerText = "Signing in...";
 
@@ -72,6 +73,7 @@
 
                 if (!response.ok) {
                     message.innerText = data.detail || "Login failed.";
+                    message.removeAttribute("hidden");
                     button.disabled = false;
                     button.innerText = "Sign in";
                     return;

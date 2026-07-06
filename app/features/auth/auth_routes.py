@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, Header
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Header, Body
 from pydantic import BaseModel
 
 from app.features.auth.auth_service import register_user, login_user
@@ -8,20 +10,23 @@ router = APIRouter()
 
 
 class RegisterRequest(BaseModel):
-    name: str
-    email: str
-    password: str
-    role: str
-    department: str
+    name: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+    department: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
-    email: str
-    password: str
+    email: Optional[str] = None
+    password: Optional[str] = None
 
 
 @router.post("/register")
-def register(payload: RegisterRequest):
+def register(payload: Optional[RegisterRequest] = Body(default=None)):
+    if payload is None:
+        raise HTTPException(status_code=400, detail="Request body is required.")
+
     try:
         user = register_user(
             payload.name,
@@ -44,7 +49,10 @@ def register(payload: RegisterRequest):
 
 
 @router.post("/login")
-def login(payload: LoginRequest):
+def login(payload: Optional[LoginRequest] = Body(default=None)):
+    if payload is None:
+        raise HTTPException(status_code=400, detail="Request body is required.")
+
     try:
         result = login_user(payload.email, payload.password)
 
@@ -65,7 +73,7 @@ def login(payload: LoginRequest):
 
 
 @router.get("/me")
-def get_current_user(authorization: str = Header(None)):
+def get_current_user(authorization: Optional[str] = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Valid authorization token is required.")
 

@@ -19,6 +19,9 @@ def register_user(name: str, email: str, password: str, role: str, department: s
     if existing_user:
         raise ValueError("Email is already registered.")
 
+    if len(password) < 8:
+        raise ValueError("Password is too short (minimum 8 characters).")
+
     password_hash = hash_password(password)
 
     try:

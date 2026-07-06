@@ -78,6 +78,70 @@ def order_page(request: Request):
         name="order.html"
     )
 
+@app.get("/orders", response_class=HTMLResponse)
+def orders_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="data_page.html",
+        context={
+            "page_title": "Orders",
+            "page_description": "View FinMark customer service orders from the database.",
+            "page_type": "orders"
+        }
+    )
+
+
+@app.get("/products", response_class=HTMLResponse)
+def products_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="data_page.html",
+        context={
+            "page_title": "Services",
+            "page_description": "View the FinMark service catalog used by the Product Service.",
+            "page_type": "products"
+        }
+    )
+
+
+@app.get("/payments", response_class=HTMLResponse)
+def payments_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="data_page.html",
+        context={
+            "page_title": "Payments",
+            "page_description": "View payment records created from customer service orders.",
+            "page_type": "payments"
+        }
+    )
+
+
+@app.get("/reports", response_class=HTMLResponse)
+def reports_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="data_page.html",
+        context={
+            "page_title": "Reports",
+            "page_description": "Review database-backed financial, order, payment, and service summaries.",
+            "page_type": "reports"
+        }
+    )
+
+
+@app.get("/monitoring", response_class=HTMLResponse)
+def monitoring_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="data_page.html",
+        context={
+            "page_title": "Monitoring",
+            "page_description": "View system health, audit logs, and event bus activity.",
+            "page_type": "monitoring"
+        }
+    )
+
 @app.get("/health")
 def health_check():
     return {

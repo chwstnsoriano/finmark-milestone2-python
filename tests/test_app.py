@@ -247,3 +247,89 @@ def test_audit_logs_available():
 
     assert response.status_code == 200
     assert response.json()["message"] == "Audit logs retrieved successfully"
+
+def test_customer_registration_success():
+    unique_email = f"customer-{uuid4()}@finmark.local"
+
+    response = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Customer Test User",
+            "email": unique_email,
+            "password": "SecurePass123",
+            "role": "customer",
+            "department": "client"
+        }
+    )
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "User registered successfully"
+    assert response.json()["user"]["role"] == "customer"
+    assert response.json()["user"]["department"] == "client"
+
+
+def test_customer_login_returns_customer_role():
+    unique_email = f"customer-login-{uuid4()}@finmark.local"
+
+    register_response = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Customer Login User",
+            "email": unique_email,
+            "password": "SecurePass123",
+            "role": "customer",
+            "department": "client"
+        }
+    )
+
+    assert register_response.status_code == 200
+
+    login_response = client.post(
+        "/api/auth/login",
+        json={
+            "email": unique_email,
+            "password": "SecurePass123"
+        }
+    )
+
+    assert login_response.status_code == 200
+    assert login_response.json()["user"]["role"] == "customer"
+
+
+def test_customer_cannot_access_dashboard_summary():
+    unique_email = f"customer-dashboard-{uuid4()}@finmark.local"
+
+    register_response = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Customer Dashboard User",
+            "email": unique_email,
+            "password": "SecurePass123",
+            "role": "customer",
+            "department": "client"
+        }
+    )
+
+    assert register_response.status_code == 200
+
+    login_response = client.post(
+        "/api/auth/login",
+        json={
+            "email": unique_email,
+            "password": "SecurePass123"
+        }
+    )
+
+    assert login_response.status_code == 200
+
+    token = login_response.json()["token"]
+
+    dashboard_response = client.get(
+        "/api/dashboard/summary",
+        headers={
+            "Authorization": f"Bearer {token}"
+        }
+    )
+
+    assert dashboard_response.status_code == 403
+    assert dashboard_response.json()["detail"] == "Customers can place service orders but cannot access the employee dashboard."

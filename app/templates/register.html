@@ -19,7 +19,7 @@
             <p class="small-title">FinMark User Setup</p>
             <h1>Create User</h1>
             <p class="muted-text">
-                Register a real user account in the local SQLite database.
+                Register as an employee or customer in the local SQLite database.
             </p>
 
             <form id="registerForm">
@@ -41,6 +41,8 @@
                 <div class="mb-3">
                     <label class="form-label">Role</label>
                     <select class="form-select modern-input" id="role" required>
+                        <option value="">Select role</option>
+                        <option value="customer">Customer</option>
                         <option value="coo">COO</option>
                         <option value="admin">Admin</option>
                         <option value="finance">Finance</option>
@@ -52,6 +54,8 @@
                 <div class="mb-3">
                     <label class="form-label">Department</label>
                     <select class="form-select modern-input" id="department" required>
+                        <option value="">Select department</option>
+                        <option value="client">Client</option>
                         <option value="executive">Executive</option>
                         <option value="finance">Finance</option>
                         <option value="operations">Operations</option>
@@ -64,7 +68,7 @@
                 </button>
             </form>
 
-            <div id="message" class="p-2 px-3 shadow-lg mt-3 fw-bold rounded-3 bg-danger"></div>
+            <div id="message" class="p-2 px-3 shadow-lg mt-3 fw-bold rounded-3" hidden="true"></div>
 
             <div class="auth-footer">
                 <span>Already have an account?</span>
@@ -77,6 +81,14 @@
         const form = document.getElementById("registerForm");
         const message = document.getElementById("message");
         const button = document.getElementById("registerButton");
+        const roleSelect = document.getElementById("role");
+        const departmentSelect = document.getElementById("department");
+
+        roleSelect.addEventListener("change", function() {
+            if (roleSelect.value === "customer") {
+                departmentSelect.value = "client";
+            }
+        });
 
         form.addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -84,7 +96,7 @@
             message.innerText = "";
             message.setAttribute("hidden", true);
             message.classList.remove("bg-danger", "bg-success");
-            //message.className = "mt-3 fw-bold";
+
             button.disabled = true;
             button.innerText = "Creating account...";
 
@@ -106,18 +118,17 @@
                 });
 
                 const data = await response.json();
-                message.removeAttribute("hidden")
+
+                message.removeAttribute("hidden");
 
                 if (!response.ok) {
-                    //message.className = "mt-3 fw-bold text-danger";
                     message.classList.add("bg-danger");
                     message.innerText = data.detail || "Registration failed.";
                     button.disabled = false;
                     button.innerText = "Create Account";
                     return;
                 }
-                
-                
+
                 message.classList.add("bg-success");
                 message.innerText = "Registration successful. Redirecting to login...";
 
@@ -126,7 +137,8 @@
                 }, 1200);
 
             } catch (error) {
-                message.className = "mt-3 fw-bold text-danger";
+                message.removeAttribute("hidden");
+                message.classList.add("bg-danger");
                 message.innerText = "Unable to connect to the server.";
                 button.disabled = false;
                 button.innerText = "Create Account";

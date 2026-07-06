@@ -81,8 +81,12 @@
 
                 localStorage.setItem("finmark_token", data.token);
                 localStorage.setItem("finmark_user", JSON.stringify(data.user));
-
+                
+                if (data.user.role === "customer") {
+                window.location.href = "/order";
+                } else {
                 window.location.href = "/dashboard";
+                }
 
             } catch (error) {
                 message.innerText = "Unable to connect to the server.";

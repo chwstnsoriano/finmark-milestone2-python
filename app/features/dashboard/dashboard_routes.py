@@ -1,31 +1,30 @@
-from fastapi import APIRouter, Header, HTTPException, Depends
+from typing import Optional
 
-from app.utils.security import decode_access_token
+from fastapi import APIRouter, HTTPException, Header
+
 from app.features.dashboard.dashboard_service import get_dashboard_summary
+from app.utils.security import decode_access_token
 
 router = APIRouter()
 
 
-def get_current_user(authorization: str = Header(None)):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Authorization header is required.")
-
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid authorization format.")
+@router.get("/summary")
+def dashboard_summary(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Valid authorization token is required.")
 
     token = authorization.replace("Bearer ", "")
 
     try:
-        return decode_access_token(token)
+        user = decode_access_token(token)
 
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token.")
 
+    if user["role"] == "customer":
+        raise HTTPException(
+            status_code=403,
+            detail="Customers can place service orders but cannot access the employee dashboard."
+        )
 
-@router.get("/summary")
-def dashboard_summary(current_user: dict = Depends(get_current_user)):
-    try:
-        return get_dashboard_summary(current_user)
-
-    except Exception:
-        raise HTTPException(status_code=500, detail="Unable to load dashboard summary.")
+    return get_dashboard_summary(user)

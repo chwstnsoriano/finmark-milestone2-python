@@ -1,9 +1,11 @@
 import sqlite3
+import re
 
 from app.database import create_user, find_user_by_email
 from app.utils.security import hash_password, verify_password, create_access_token
 
 
+STANDARD_MINI_EMAIL = re.compile(r"^(?P<local_part>[\w\-]+([\.%\+][\w\-]+){0,})@(?P<domain>([a-zA-Z0-9](-*[a-zA-Z0-9]+){0,})(\.[\w]+){1,})$")
 ALLOWED_ROLES = ["coo", "admin", "finance", "operations", "staff", "customer"]
 
 
@@ -14,9 +16,24 @@ def clean_text(value):
     return str(value).strip()
 
 
+# def validate_email(email: str):
+#     if "@" not in email or "." not in email:
+#         raise ValueError("A valid email address is required.")
+
+
+# Simple syntax-based email validation. Covers most email addresses
+# that comply with the RFC standard that follow this common format:
+# local-part@domain. Does not currently account for email provider
+# rules like those from Gmail, so the address -.-@gmail.com works in
+# the RFC syntax rules, but Gmail will reject this.
 def validate_email(email: str):
-    if "@" not in email or "." not in email:
+    email_matches = STANDARD_MINI_EMAIL.match(email)
+    if not email_matches:
         raise ValueError("A valid email address is required.")
+    elif len(email) > 254:
+        raise ValueError("Full email address must be shorter than 255 characters.")
+    elif len(email_matches.group("local_part")) > 64:
+        raise ValueError("First section of address must be less than 64 characters.")
 
 
 def register_user(name: str, email: str, password: str, role: str, department: str):

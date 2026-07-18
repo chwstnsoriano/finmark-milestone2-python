@@ -1,0 +1,63 @@
+﻿name: finmark-scaling
+
+services:
+  order-db:
+    image: postgres:18-alpine
+    container_name: finmark-order-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: finmark_orders
+      POSTGRES_USER: finmark_order
+      POSTGRES_PASSWORD: finmark_order_demo_password
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - order_postgres_data:/var/lib/postgresql
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  order-service:
+    build:
+      context: ./services/order_service
+      dockerfile: Dockerfile
+
+    container_name: finmark-order-service
+    restart: unless-stopped
+
+    environment:
+      DATABASE_URL: "postgresql://finmark_order:finmark_order_demo_password@order-db:5432/finmark_orders"
+
+    depends_on:
+      order-db:
+        condition: service_healthy
+
+    ports:
+      - "8001:8001"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health/live', timeout=3)"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  order_postgres_data:

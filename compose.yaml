@@ -1,4 +1,4 @@
-﻿name: finmark-scaling
+name: finmark-scaling
 
 services:
   order-db:
@@ -42,8 +42,8 @@ services:
       order-db:
         condition: service_healthy
 
-    ports:
-      - "8001:8001"
+    expose:
+      - "8001"
 
     healthcheck:
       test:
@@ -58,6 +58,31 @@ services:
       retries: 5
       start_period: 15s
 
+  order-lb:
+    image: nginx:1.30.4-alpine
+    restart: unless-stopped
+
+    volumes:
+      - ./infrastructure/nginx/order-service.conf:/etc/nginx/nginx.conf:ro
+
+    depends_on:
+      order-service:
+        condition: service_started
+
+    ports:
+      - "8001:8080"
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:8080/lb-health >/dev/null || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   finmark-app:
     build:
       context: .
@@ -69,7 +94,7 @@ services:
       - .env
 
     environment:
-      ORDER_SERVICE_URL: "http://order-service:8001"
+      ORDER_SERVICE_URL: "http://order-lb:8080"
       ORDER_SERVICE_TIMEOUT_SECONDS: "5"
       ORDER_SERVICE_FALLBACK_ENABLED: "true"
 

@@ -1716,7 +1716,7 @@ The second command should return no output.
 
 ---
 
-# Suggested Professor Demo Flow
+# Suggested Demo Flow
 
 The following sequence provides a clear end-to-end presentation.
 

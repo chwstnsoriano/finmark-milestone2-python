@@ -33,7 +33,6 @@ services:
       context: ./services/order_service
       dockerfile: Dockerfile
 
-    container_name: finmark-order-service
     restart: unless-stopped
 
     environment:
@@ -52,7 +51,38 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health/live', timeout=3)"
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health/ready', timeout=3)"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  finmark-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      ORDER_SERVICE_URL: "http://order-service:8001"
+      ORDER_SERVICE_TIMEOUT_SECONDS: "5"
+      ORDER_SERVICE_FALLBACK_ENABLED: "true"
+
+    ports:
+      - "8000:8000"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/system/health', timeout=3)"
         ]
       interval: 10s
       timeout: 5s

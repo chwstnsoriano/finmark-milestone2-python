@@ -1,4 +1,4 @@
-# FinMark Milestone 2 — Scalable and Resilient Prototype
+# FinMark Terminal Assessment — Scalable and Resilient Prototype
 
 FinMark is a working software-development prototype for a secure, scalable, and resilient business-service platform. It supports customer service orders and employee operations for FinMark Corporation, which provides financial analysis, marketing analytics, business intelligence, and consulting services to clients in retail, e-commerce, healthcare, and manufacturing.
 
